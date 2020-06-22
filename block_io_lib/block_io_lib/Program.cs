@@ -44,15 +44,8 @@ namespace block_io_lib
             string encryptedData = Helper.Encrypt("block.io", encryptionKey);
             Console.WriteLine("Calling encrypt data with received key: " + encryptedData);
             Console.WriteLine("Calling decrypt data with received key. Decrypted data: " + Helper.Decrypt(encryptedData, encryptionKey));
-            Console.WriteLine("This is wif " + new NBitcoin.Key().GetWif(Network.Main));
-            Console.WriteLine("This is network main " + Network.GetNetworks());
 
 
         }
-    }
-
-    class BlockIo
-    {
-
     }
 }
