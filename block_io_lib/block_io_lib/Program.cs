@@ -44,8 +44,26 @@ namespace block_io_lib
             string encryptedData = Helper.Encrypt("block.io", encryptionKey);
             Console.WriteLine("Calling encrypt data with received key: " + encryptedData);
             Console.WriteLine("Calling decrypt data with received key. Decrypted data: " + Helper.Decrypt(encryptedData, encryptionKey));
-
-
+            string JsonString = "{ Age:  52}";
+            try
+            {
+                dynamic stuff = JsonConvert.DeserializeObject("{allowNoPin: false}");
+                //stuff.newParam = "param";
+                //stuff = JsonConvert.DeserializeObject(JsonString);
+                if (stuff.newParam == null)
+                {
+                    Console.WriteLine("new param don't exist brah");
+                }
+                else
+                {
+                    Console.WriteLine("new param DOES EXIST");
+                }
+                //Console.WriteLine(stuff);
+            }
+            catch(JsonReaderException ex)
+            {
+                Console.WriteLine("An exception occurred, moving on.." + ex);
+            }
         }
     }
 }
