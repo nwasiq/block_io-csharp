@@ -38,32 +38,35 @@ namespace block_io_lib
             //Console.WriteLine(myJsonObj.name.GetType());
             //Key test = Helper.ExtractKeyFromEncryptedPassphrase("lalla", "llaalsdf");
 
-            string encryptionKey = Helper.PinToKey("50a0ffbc98bf8ea0c9322a02228a18e6");
-            Console.WriteLine("Calling pin to key gives this encryption key: " + encryptionKey );
-            //received key: +1sOM30JGfoIzrn+y/9qCH/JNFt6c1DPlLe0xoK0ins=
-            string encryptedData = Helper.Encrypt("block.io", encryptionKey);
-            Console.WriteLine("Calling encrypt data with received key: " + encryptedData);
-            Console.WriteLine("Calling decrypt data with received key. Decrypted data: " + Helper.Decrypt(encryptedData, encryptionKey));
-            string JsonString = "{ Age:  52}";
-            try
-            {
-                dynamic stuff = JsonConvert.DeserializeObject("{allowNoPin: false}");
-                //stuff.newParam = "param";
-                //stuff = JsonConvert.DeserializeObject(JsonString);
-                if (stuff.newParam == null)
-                {
-                    Console.WriteLine("new param don't exist brah");
-                }
-                else
-                {
-                    Console.WriteLine("new param DOES EXIST");
-                }
-                //Console.WriteLine(stuff);
-            }
-            catch(JsonReaderException ex)
-            {
-                Console.WriteLine("An exception occurred, moving on.." + ex);
-            }
+            //string encryptionKey = Helper.PinToKey("50a0ffbc98bf8ea0c9322a02228a18e6");
+            //Console.WriteLine("Calling pin to key gives this encryption key: " + encryptionKey );
+            ////received key: +1sOM30JGfoIzrn+y/9qCH/JNFt6c1DPlLe0xoK0ins=
+            //string encryptedData = Helper.Encrypt("block.io", encryptionKey);
+            //Console.WriteLine("Calling encrypt data with received key: " + encryptedData);
+            //Console.WriteLine("Calling decrypt data with received key. Decrypted data: " + Helper.Decrypt(encryptedData, encryptionKey));
+            //string JsonString = "{ Age:  52}";
+            //try
+            //{
+            //    dynamic stuff = JsonConvert.DeserializeObject("{allowNoPin: false}");
+            //    //stuff.newParam = "param";
+            //    //stuff = JsonConvert.DeserializeObject(JsonString);
+            //    if (stuff.newParam == null)
+            //    {
+            //        Console.WriteLine("new param don't exist brah");
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("new param DOES EXIST");
+            //    }
+            //    //Console.WriteLine(stuff);
+            //}
+            //catch(JsonReaderException ex)
+            //{
+            //    Console.WriteLine("An exception occurred, moving on.." + ex);
+            //}
+            Console.WriteLine(BlockIo._constructURL("get_addr"));
+
         }
+
     }
 }
