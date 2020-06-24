@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
 using NBitcoin;
+using block_io_lib.Objects;
 
 namespace block_io_lib
 {

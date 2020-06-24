@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using RestSharp;
 
 namespace block_io_lib
 {
     class BlockIo
     {
+        private readonly RestClient RestClient;
+        private readonly string ApiUrl;
+
         public dynamic Options;
         public string Key { get; set; }
         public int Version { get; set; }
@@ -58,7 +65,7 @@ namespace block_io_lib
 
         public List<string> SWEEP_METHODS = new List<string>() { "sweep_from_address" };
 
-        public BlockIo(string Config, string Pin = null, int Version = -1, string Options = null)
+        public BlockIo(string Config, string Pin = null, int Version = 2, string Options = null)
         {
             this.Options = JsonConvert.DeserializeObject("{allowNoPin: false}");
             dynamic ConfigObj;
@@ -109,8 +116,14 @@ namespace block_io_lib
                     }
                 }
             }
+            string ServerString = Server != "" ? Server + "." : Server;  // eg: 'dev.'
+            string PortString = Port != "" ? ":" + Port : Port;
+
+            ApiUrl = "https://" + ServerString + Host + PortString + "/api/v" + Version.ToString();
+
+            RestClient = new RestClient(ApiUrl) { Authenticator = new BlockIoAuthenticator(Key) };
         }
-        public static string JsonToQuery(string jsonQuery)
+        public string JsonToQuery(string jsonQuery)
         {
             string str = "?";
             str += jsonQuery.Replace(":", "=").Replace("{", "").
@@ -124,20 +137,62 @@ namespace block_io_lib
 
         }
 
-        public static string _constructURL(string Path, string Query = null)
+        public void _sweep(string Method, string Path, string args)
         {
-            string Server="", Port="80", Host="block.io"; int Version=2;
-            string ServerString = Server != "" ? Server + "." : Server;
-            string PortString = Port != "" ? ":" + Port : Port;
+
+        }
+
+        public BlockIoResponse<dynamic> _request(string Method, string Path, string args="{}")
+        {
+
+            return GetNewAddress(Method, Path, args).Result;
+        }
+
+        public bool validate_key()
+        {
+            return true;
+        }
+
+        public string _constructPath(string Path, string Query = null)
+        {
+            //Query is a json string in format: "{name: John}"
+
             string QueryString = Query != null ? JsonToQuery(Query) : "";
-            string[] ToConcat = { 
-                "https://", 
-                ServerString, 
-                Host, PortString, 
-                "/api/v", Version.ToString(), "/",
-                Path, QueryString
-            };
-            return string.Join("", ToConcat);
+            return Path + QueryString;
+        }
+
+        public async Task<BlockIoResponse<dynamic>> GetNewAddress(string Method, string Path, string args="{}")
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            var request = new RestRequest(Method == "POST" ? _constructPath(Path, "{api_key: '" + Key + "'}") : Path, (Method)Enum.Parse(typeof(Method), Method));
+
+            if(Method == "POST")
+            {
+                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.AddJsonBody(JsonConvert.DeserializeObject(args));
+            }
+            else
+            {
+                dynamic qs = JsonConvert.DeserializeObject(args);
+                qs.api_key = Key;
+                request.AddJsonBody(qs);
+            }
+            var response = await RestClient.ExecuteGetAsync(request);
+            CheckBadRequest(response);
+            return GetData<BlockIoResponse<dynamic>>(response);
+        }
+        private void CheckBadRequest(IRestResponse response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception(response.Content);
+            }
+        }
+        private T GetData<T>(IRestResponse response)
+        {
+            var data = JsonConvert.DeserializeObject<T>(response.Content);
+            return data;
         }
     }
 }

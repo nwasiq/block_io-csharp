@@ -64,7 +64,9 @@ namespace block_io_lib
             //{
             //    Console.WriteLine("An exception occurred, moving on.." + ex);
             //}
-            Console.WriteLine(BlockIo._constructURL("get_addr"));
+
+            BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1' }");
+            Console.WriteLine(test._request("GET", "get_my_addresses").Data);
 
         }
 
