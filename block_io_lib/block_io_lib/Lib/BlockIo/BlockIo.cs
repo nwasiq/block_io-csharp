@@ -10,6 +10,20 @@ using RestSharp;
 
 namespace block_io_lib
 {
+    /**
+     * A note on args
+     * 
+     * args are in JSON format and need to be passed like this: 
+     * "{param1: 'stringValue', param2: intValue, param3: ['this', 'is', 'a', 'list']}"
+     * 
+     * 
+     * A note on lib method usage
+     * 
+     * BlockIo blockLib = new BlockIo("{ api_key: 'key' }");
+     * var res = blockLib.GetBalance().Data;
+     * var status = blockLib.GetBalance().Status;
+     */
+
     public partial class BlockIo
     {
         private readonly RestClient RestClient;
@@ -28,33 +42,6 @@ namespace block_io_lib
         private string DefaultServer = "";
         private string DefaultPort = "";
         private string Host = "block.io";
-
-        private string ERR_KEY_INV = "Error occurred validating key";
-        private string ERR_PIN_MIS = "Missing 'pin', please supply as argument";
-        private string ERR_PIN_INV = "private key mismatch. Invalid Secret PIN detected.";
-        private string ERR_PK_EXTR = "Could not extract privkey";
-        private string ERR_WIF_MIS = "Missing mandatory private_key argument";
-        private string ERR_WIF_INV = "Could not parse private_key as WIF";
-        private string ERR_DEST_MIS ="Missing mandatory to_address argument";
-        private string ERR_UNKNOWN = "Unknown error occured";
-
-        public List<string> PASS_THROUGH_METHODS = new List<string>() {
-          "get_balance", "get_new_address", "get_my_addresses", "get_address_received",
-          "get_address_by_label", "get_address_balance", "create_user", "get_users",
-          "get_user_balance", "get_user_address", "get_user_received",
-          "get_transactions", "sign_and_finalize_withdrawal", "get_new_dtrust_address",
-          "get_my_dtrust_addresses", "get_dtrust_address_by_label",
-          "get_dtrust_transactions", "get_dtrust_address_balance",
-          "get_network_fee_estimate", "archive_address", "unarchive_address",
-          "get_my_archived_addresses", "archive_dtrust_address",
-          "unarchive_dtrust_address", "get_my_archived_dtrust_addresses",
-          "get_dtrust_network_fee_estimate", "create_notification", "disable_notification",
-          "enable_notification", "get_notifications", "get_recent_notification_events",
-          "delete_notification", "validate_api_key", "sign_transaction", "finalize_transaction",
-          "get_my_addresses_without_balances", "get_raw_transaction", "get_dtrust_balance",
-          "archive_addresses", "unarchive_addresses", "archive_dtrust_addresses", "unarchive_dtrust_addresses",
-            "is_valid_address", "get_current_price", "get_account_info"
-        };
 
         public List<string> WITHDRAWAL_METHODS = new List<string>() {
           "withdraw", "withdraw_from_user", "withdraw_from_label",
@@ -123,45 +110,57 @@ namespace block_io_lib
 
             RestClient = new RestClient(ApiUrl) { Authenticator = new BlockIoAuthenticator(Key) };
         }
-        public string JsonToQuery(string jsonQuery)
+        private string JsonToQuery(string jsonQuery)
         {
-            string str = "?";
-            str += jsonQuery.Replace(":", "=").Replace("{", "").
+            jsonQuery = jsonQuery.Replace(":", "=").Replace("{", "").
                         Replace("}", "").Replace(",", "&").
                             Replace("\"", "").Replace(" ", "").Replace("'", "");
-            return str;
+
+            int lastAmpercant = -1;
+
+            for(int i=0; i<jsonQuery.Length; i++)
+            {
+                if (jsonQuery[i] == '&')
+                {
+                    lastAmpercant = i;
+                    jsonQuery = jsonQuery.Remove(i, 1).Insert(i, ",");
+                }
+                if (jsonQuery[i] == '=')
+                {
+                    if (lastAmpercant != -1)
+                    {
+                        jsonQuery = jsonQuery.Remove(lastAmpercant, 1).Insert(lastAmpercant, "&");
+                    }
+                }
+            }
+            return jsonQuery.Replace("[", "").Replace("]", "");
         }
 
-        public void _withdraw(string Method, string Path, string args)
+
+        private void _withdraw(string Method, string Path, string args)
         {
 
         }
 
-        public void _sweep(string Method, string Path, string args)
+        private void _sweep(string Method, string Path, string args)
         {
 
         }
 
-        public BlockIoResponse<dynamic> _request(string Method, string Path, string args="{}")
+        public BlockIoResponse<dynamic> ValidateKey()
         {
-
-            return GetNewAddress(Method, Path, args).Result;
-        }
-
-        public bool validate_key()
-        {
-            return true;
+            return _request("GET", "get_balance").Result;
         }
 
         public string _constructPath(string Path, string Query = null)
         {
             //Query is a json string in format: "{name: John}"
 
-            string QueryString = Query != null ? JsonToQuery(Query) : "";
+            string QueryString = Query != null ? "?" + JsonToQuery(Query) : "";
             return Path + QueryString;
         }
 
-        private async Task<BlockIoResponse<dynamic>> GetNewAddress(string Method, string Path, string args="{}")
+        private async Task<BlockIoResponse<dynamic>> _request(string Method, string Path, string args="{}")
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -169,8 +168,22 @@ namespace block_io_lib
 
             if(Method == "POST")
             {
-                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddJsonBody(JsonConvert.DeserializeObject(args));
+                request.AddHeader("Content-Type", "application/json");
+                string queryString = JsonToQuery(args);
+                if(args != "{}")
+                {
+                    string[] querySegments = queryString.Split('&');
+                    foreach (string segment in querySegments)
+                    {
+                        string[] parts = segment.Split('=');
+                        if (parts.Length > 0)
+                        {
+                            string key = parts[0].Trim(new char[] { '?', ' ' });
+                            string val = parts[1].Trim();
+                            request.AddParameter(key, val, ParameterType.QueryString);
+                        }
+                    }
+                }
             }
             else
             {

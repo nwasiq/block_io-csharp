@@ -65,9 +65,11 @@ namespace block_io_lib
             //    Console.WriteLine("An exception occurred, moving on.." + ex);
             //}
 
-            BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1' }");
-            Console.WriteLine(test._request("GET", "get_my_addresses").Data);
-
+            BlockIo test = new BlockIo("{ api_key: '' }");
+            string jsonString = "{addresses: ['2N8SB5MD5ev8tSKU363j9S9p5nZk111mFRZ', '2MsxwrZPN6pkMYxct8JvPKyU2sW2imtCUer']}";
+            var test2 = test.ValidateApiKey().Data;
+            Console.WriteLine(test2);
+            //BlockIoResponse<> res = test.GetAddressBalance("user_id: 2").Data
         }
 
     }
