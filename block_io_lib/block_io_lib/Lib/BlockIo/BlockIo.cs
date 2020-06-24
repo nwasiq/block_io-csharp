@@ -10,33 +10,33 @@ using RestSharp;
 
 namespace block_io_lib
 {
-    class BlockIo
+    public partial class BlockIo
     {
         private readonly RestClient RestClient;
         private readonly string ApiUrl;
 
-        public dynamic Options;
-        public string Key { get; set; }
-        public int Version { get; set; }
-        public string Server { get; set; }
-        public string Port { get; set; }
-        public string Pin { get; set; }
-        public string AesKey { get; set; }
-        public Key ECKey { get; set; }
+        private dynamic Options;
+        private string Key { get; set; }
+        private int Version { get; set; }
+        private string Server { get; set; }
+        private string Port { get; set; }
+        private string Pin { get; set; }
+        private string AesKey { get; set; }
+        private Key ECKey { get; set; }
 
-        public int DefaultVersion = 2;
-        public string DefaultServer = "";
-        public string DefaultPort = "";
-        public string Host = "block.io";
+        private int DefaultVersion = 2;
+        private string DefaultServer = "";
+        private string DefaultPort = "";
+        private string Host = "block.io";
 
-        public string ERR_KEY_INV = "Error occurred validating key";
-        public string ERR_PIN_MIS = "Missing 'pin', please supply as argument";
-        public string ERR_PIN_INV = "Public key mismatch. Invalid Secret PIN detected.";
-        public string ERR_PK_EXTR = "Could not extract privkey";
-        public string ERR_WIF_MIS = "Missing mandatory private_key argument";
-        public string ERR_WIF_INV = "Could not parse private_key as WIF";
-        public string ERR_DEST_MIS ="Missing mandatory to_address argument";
-        public string ERR_UNKNOWN = "Unknown error occured";
+        private string ERR_KEY_INV = "Error occurred validating key";
+        private string ERR_PIN_MIS = "Missing 'pin', please supply as argument";
+        private string ERR_PIN_INV = "private key mismatch. Invalid Secret PIN detected.";
+        private string ERR_PK_EXTR = "Could not extract privkey";
+        private string ERR_WIF_MIS = "Missing mandatory private_key argument";
+        private string ERR_WIF_INV = "Could not parse private_key as WIF";
+        private string ERR_DEST_MIS ="Missing mandatory to_address argument";
+        private string ERR_UNKNOWN = "Unknown error occured";
 
         public List<string> PASS_THROUGH_METHODS = new List<string>() {
           "get_balance", "get_new_address", "get_my_addresses", "get_address_received",
@@ -161,7 +161,7 @@ namespace block_io_lib
             return Path + QueryString;
         }
 
-        public async Task<BlockIoResponse<dynamic>> GetNewAddress(string Method, string Path, string args="{}")
+        private async Task<BlockIoResponse<dynamic>> GetNewAddress(string Method, string Path, string args="{}")
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
