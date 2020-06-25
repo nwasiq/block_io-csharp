@@ -120,6 +120,8 @@ namespace block_io_lib
 
             for(int i=0; i<jsonQuery.Length; i++)
             {
+                // need to handle ',' within a json array
+                //'&' will always come after '=' if at all in a query string
                 if (jsonQuery[i] == '&')
                 {
                     lastAmpercant = i;
@@ -137,14 +139,15 @@ namespace block_io_lib
         }
 
 
-        private void _withdraw(string Method, string Path, string args)
+        private Task<BlockIoResponse<dynamic>> _withdraw(string Method, string Path, string args)
         {
+            return _request(Method, Path, args);
 
         }
 
-        private void _sweep(string Method, string Path, string args)
+        private Task<BlockIoResponse<dynamic>> _sweep(string Method, string Path, string args)
         {
-
+            return _request(Method, Path, args);
         }
 
         public BlockIoResponse<dynamic> ValidateKey()
@@ -154,7 +157,7 @@ namespace block_io_lib
 
         public string _constructPath(string Path, string Query = null)
         {
-            //Query is a json string in format: "{name: John}"
+            //Query is a json string in format: "{name: 'John'}"
 
             string QueryString = Query != null ? "?" + JsonToQuery(Query) : "";
             return Path + QueryString;
