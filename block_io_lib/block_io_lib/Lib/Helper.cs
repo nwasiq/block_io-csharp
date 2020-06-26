@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
-using NBitcoin;
-using block_io_lib.Objects;
 
 namespace block_io_lib
 {
@@ -104,6 +101,7 @@ namespace block_io_lib
 
             byte[] encryptedBytes = Convert.FromBase64CharArray(CipherText.ToCharArray(), 0, CipherText.Length);
             byte[] decryptedData = decrypto.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+            
             return ASCIIEncoding.UTF8.GetString(decryptedData);
         }
 

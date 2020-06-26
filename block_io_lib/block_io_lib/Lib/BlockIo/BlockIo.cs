@@ -5,7 +5,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using block_io_lib.Objects;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -47,7 +46,7 @@ namespace block_io_lib
         public BlockIo(string Config, string Pin = null, int Version = 2, string Options = null)
         {
             this.Options = JsonConvert.DeserializeObject("{allowNoPin: false}");
-            this.Pin = null;
+            this.Pin = Pin;
             this.AesKey = null;
             dynamic ConfigObj;
             try
@@ -142,25 +141,25 @@ namespace block_io_lib
                 string pin = argsObj.pin != null ? argsObj.pin : this.Pin;
                 Task<BlockIoResponse<dynamic>> RequestTask = _request(Method, Path, args);
                  res = RequestTask.Result;
-                if(res.Status == "fail" || res.Data.reference_id 
+                if(res.Status == "fail" || res.Data.reference_id == null
                 || res.Data.encrypted_passphrase == null || res.Data.encrypted_passphrase.passphrase == null) 
                     return RequestTask;
 
-                if (pin != null)
+                if (pin == null)
                 {
-                    if(this.Options.allowNoPin)
+                    if(this.Options.allowNoPin == true)
                     {
                         return RequestTask;
                     }
-                    throw new Exception("'Public key mismatch. Invalid Secret PIN detected.");
+                    throw new Exception("Public key mismatch. Invalid Secret PIN detected.");
                 }
-
+                
                 string enrypted_passphrase = res.Data.encrypted_passphrase.passphrase;
                 string aesKey = this.AesKey != null ? this.AesKey: Helper.PinToKey(pin);
                 Key privKey = Helper.ExtractKeyFromEncryptedPassphrase(enrypted_passphrase, aesKey);
                 string pubKey = privKey.PubKey.ToHex();
                 if (pubKey != res.Data.encrypted_passphrase.signer_public_key)
-                    throw new Exception("'Public key mismatch. Invalid Secret PIN detected.");
+                    throw new Exception("Public key mismatch. Invalid Secret PIN detected.");
 
                 res.Data.inputs = Helper.SignInputs(privKey, res.Data.inputs);
 

@@ -68,19 +68,15 @@ namespace block_io_lib
             //    Console.WriteLine("An exception occurred, moving on.." + ex);
             //}
 
-            //BlockIo test = new BlockIo("{ api_key: '' }");
+            BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "afusadfuhauidfhbzmxcv");
+            //Console.WriteLine(test.GetNewAddress("{label: 'shibe2'}").Data);
+            //Console.WriteLine(test.GetMyAddresses().Data);
+            Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
+            //"2NCUkmRWQzy82bwRTyDuWDyQ2zhWUVFBCZM",
             //string jsonString = "{addresses: ['2N8SB5MD5ev8tSKU363j9S9p5nZk111mFRZ', '2MsxwrZPN6pkMYxct8JvPKyU2sW2imtCUer']}";
             //var test2 = test.ValidateApiKey().Data;
             //Console.WriteLine(test2);
             //BlockIoResponse<> res = test.GetAddressBalance("user_id: 2").Data
-            dynamic dyn = JsonConvert.DeserializeObject("{args:[1,2,3]}");
-            foreach(int num in dyn.args){
-                Console.WriteLine(num);
-            }
-            
-            List<int> testIntArr = new List<int>();
-            testIntArr.AddRange(dyn.args);
-            Console.WriteLine(testIntArr[1]);
         }
 
     }
