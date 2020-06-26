@@ -5,6 +5,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using block_io_lib.Objects;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -43,18 +44,11 @@ namespace block_io_lib
         private string DefaultPort = "";
         private string Host = "block.io";
 
-        public List<string> WITHDRAWAL_METHODS = new List<string>() {
-          "withdraw", "withdraw_from_user", "withdraw_from_label",
-          "withdraw_from_address", "withdraw_from_labels", "withdraw_from_addresses",
-          "withdraw_from_users", "withdraw_from_dtrust_address", "withdraw_from_dtrust_addresses",
-          "withdraw_from_dtrust_labels"
-        };
-
-        public List<string> SWEEP_METHODS = new List<string>() { "sweep_from_address" };
-
         public BlockIo(string Config, string Pin = null, int Version = 2, string Options = null)
         {
             this.Options = JsonConvert.DeserializeObject("{allowNoPin: false}");
+            this.Pin = null;
+            this.AesKey = null;
             dynamic ConfigObj;
             try
             {
@@ -141,7 +135,44 @@ namespace block_io_lib
 
         private Task<BlockIoResponse<dynamic>> _withdraw(string Method, string Path, string args)
         {
-            return _request(Method, Path, args);
+            BlockIoResponse<dynamic> res = null;
+            try
+            {
+                dynamic argsObj = JsonConvert.DeserializeObject(args);
+                string pin = argsObj.pin != null ? argsObj.pin : this.Pin;
+                Task<BlockIoResponse<dynamic>> RequestTask = _request(Method, Path, args);
+                 res = RequestTask.Result;
+                if(res.Status == "fail" || res.Data.reference_id 
+                || res.Data.encrypted_passphrase == null || res.Data.encrypted_passphrase.passphrase == null) 
+                    return RequestTask;
+
+                if (pin != null)
+                {
+                    if(this.Options.allowNoPin)
+                    {
+                        return RequestTask;
+                    }
+                    throw new Exception("'Public key mismatch. Invalid Secret PIN detected.");
+                }
+
+                string enrypted_passphrase = res.Data.encrypted_passphrase.passphrase;
+                string aesKey = this.AesKey != null ? this.AesKey: Helper.PinToKey(pin);
+                Key privKey = Helper.ExtractKeyFromEncryptedPassphrase(enrypted_passphrase, aesKey);
+                string pubKey = privKey.PubKey.ToHex();
+                if (pubKey != res.Data.encrypted_passphrase.signer_public_key)
+                    throw new Exception("'Public key mismatch. Invalid Secret PIN detected.");
+
+                res.Data.inputs = Helper.SignInputs(privKey, res.Data.inputs);
+
+                aesKey = "";
+                privKey = null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            
+            return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: '" + JsonConvert.SerializeObject(res.Data)+ "'}");
 
         }
 

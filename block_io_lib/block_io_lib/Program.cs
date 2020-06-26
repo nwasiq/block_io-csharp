@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -28,7 +29,9 @@ namespace block_io_lib
 
 
             //string encrypted = Helper.Encrypt("Wasiq", "12345678123456781234567812345678");
-            //Console.WriteLine("This is what encrypt does " + encrypted);
+            //Console.WriteLine("This is what encrypt1 does " + encrypted);
+            //string encrypted2 = Helper.Encrypt("Wasiq", "12345678123456781234567812345678");
+            //Console.WriteLine("This is what encrypt2 does " + encrypted2);
             //Console.WriteLine("This is what decrypt does " + Helper.Decrypt(encrypted, "12345678123456781234567812345678"));
             //Console.WriteLine("This is what ExtractKey does " + Helper.ExtractKey(encrypted, "12345678123456781234567812345678"));
             //Console.WriteLine("This is what pintokey does: " + Helper.PinToKey("2794"));
@@ -65,11 +68,19 @@ namespace block_io_lib
             //    Console.WriteLine("An exception occurred, moving on.." + ex);
             //}
 
-            BlockIo test = new BlockIo("{ api_key: '' }");
-            string jsonString = "{addresses: ['2N8SB5MD5ev8tSKU363j9S9p5nZk111mFRZ', '2MsxwrZPN6pkMYxct8JvPKyU2sW2imtCUer']}";
-            var test2 = test.ValidateApiKey().Data;
-            Console.WriteLine(test2);
+            //BlockIo test = new BlockIo("{ api_key: '' }");
+            //string jsonString = "{addresses: ['2N8SB5MD5ev8tSKU363j9S9p5nZk111mFRZ', '2MsxwrZPN6pkMYxct8JvPKyU2sW2imtCUer']}";
+            //var test2 = test.ValidateApiKey().Data;
+            //Console.WriteLine(test2);
             //BlockIoResponse<> res = test.GetAddressBalance("user_id: 2").Data
+            dynamic dyn = JsonConvert.DeserializeObject("{args:[1,2,3]}");
+            foreach(int num in dyn.args){
+                Console.WriteLine(num);
+            }
+            
+            List<int> testIntArr = new List<int>();
+            testIntArr.AddRange(dyn.args);
+            Console.WriteLine(testIntArr[1]);
         }
 
     }

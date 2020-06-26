@@ -139,12 +139,12 @@ namespace block_io_lib
             return new Key(Encoding.ASCII.GetBytes(ComputeSha256Hash(Unhexlified)));
         }
 
-        public static List<SigInput> SignInputs(Key PrivKey, List <SigInput> Inputs)
+        public static dynamic[] SignInputs(Key PrivKey, dynamic[] Inputs)
         {
             var PubKey = PrivKey.PubKey.ToHex();
-            foreach (SigInput input in Inputs)
+            foreach (dynamic input in Inputs)
             {
-                foreach(Signer signer in input.signers)
+                foreach(dynamic signer in input.signers)
                 {
                     if (signer.signer_public_key == PubKey)
                     {
