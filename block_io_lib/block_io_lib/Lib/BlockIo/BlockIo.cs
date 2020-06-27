@@ -62,7 +62,7 @@ namespace block_io_lib
                 if(ConfigObj.pin != null)
                 {
                     this.Pin = ConfigObj.pin;
-                    this.AesKey = Helper.PinToKey(this.Pin);
+                    this.AesKey = Helper.PinToAesKey(this.Pin);
                 }
                 if(ConfigObj.options != null)
                 {
@@ -81,7 +81,7 @@ namespace block_io_lib
                 if (Pin != null)
                 {
                     this.Pin = Pin;
-                    this.AesKey = Helper.PinToKey(this.Pin);
+                    this.AesKey = Helper.PinToAesKey(this.Pin);
                     if(Options != null)
                     {
                         try
@@ -155,7 +155,7 @@ namespace block_io_lib
                 }
                 
                 string enrypted_passphrase = res.Data.encrypted_passphrase.passphrase;
-                string aesKey = this.AesKey != null ? this.AesKey: Helper.PinToKey(pin);
+                string aesKey = this.AesKey != null ? this.AesKey: Helper.PinToAesKey(pin);
                 Key privKey = Helper.ExtractKeyFromEncryptedPassphrase(enrypted_passphrase, aesKey);
                 string pubKey = privKey.PubKey.ToHex();
                 if (pubKey != res.Data.encrypted_passphrase.signer_public_key)

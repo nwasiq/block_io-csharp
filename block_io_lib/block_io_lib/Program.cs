@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.Intrinsics.X86;
 using System.Web;
 
 namespace block_io_lib
@@ -68,15 +69,27 @@ namespace block_io_lib
             //    Console.WriteLine("An exception occurred, moving on.." + ex);
             //}
 
-            BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "afusadfuhauidfhbzmxcv");
             //Console.WriteLine(test.GetNewAddress("{label: 'shibe2'}").Data);
             //Console.WriteLine(test.GetMyAddresses().Data);
-            Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
             //"2NCUkmRWQzy82bwRTyDuWDyQ2zhWUVFBCZM",
             //string jsonString = "{addresses: ['2N8SB5MD5ev8tSKU363j9S9p5nZk111mFRZ', '2MsxwrZPN6pkMYxct8JvPKyU2sW2imtCUer']}";
             //var test2 = test.ValidateApiKey().Data;
             //Console.WriteLine(test2);
             //BlockIoResponse<> res = test.GetAddressBalance("user_id: 2").Data
+
+            //BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "afusadfuhauidfhbzmxcv");
+            //Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
+
+            /**
+             * TESTING THIS
+             */
+
+            string aesKeyy = Helper.PinToAesKey("123456");
+            string ct = "I\'m a little tea pot short and stout";
+            Console.WriteLine("PIN TO AES: " + aesKeyy);
+            string encrypted = Helper.Encrypt(ct, aesKeyy);
+            Console.WriteLine("This is what encrypt with aes key does " + encrypted);
+            Console.WriteLine("This is what decrypt with aes key does " + Helper.Decrypt(encrypted, aesKeyy));
         }
 
     }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Linq;
+using System.IO;
 
 namespace block_io_lib
 {
@@ -50,83 +53,133 @@ namespace block_io_lib
             return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
         }
 
-        public static string Encrypt(string PlainText, string KeyStr)
+        //public static string Encrypt(string PlainText, string KeyStr)
+        //{
+        //    AesManaged aes = new AesManaged();
+        //    aes.KeySize = 256;
+        //
+        //    aes.Mode = CipherMode.ECB;
+        //    aes.Padding = PaddingMode.PKCS7;
+        //
+        //    byte[] keyArr = Convert.FromBase64String(KeyStr);
+        //    byte[] KeyArrBytes32Value = new byte[32];
+        //    Array.Copy(keyArr, KeyArrBytes32Value, 24);
+        //
+        //    // Initialization vector.   
+        //    byte[] IVBytes16Value = new byte[16];
+        //    Array.Clear(IVBytes16Value, 0, IVBytes16Value.Length);
+        //
+        //    aes.Key = KeyArrBytes32Value;
+        //    aes.IV = IVBytes16Value;
+        //
+        //    ICryptoTransform encrypto = aes.CreateEncryptor();
+        //
+        //    byte[] plainTextByte = ASCIIEncoding.UTF8.GetBytes(PlainText);
+        //    byte[] CipherText = encrypto.TransformFinalBlock(plainTextByte, 0, plainTextByte.Length);
+        //    return Convert.ToBase64String(CipherText);
+        //}
+        //
+        //public static string Decrypt(string CipherText, string KeyStr)
+        //{
+        //    AesManaged aes = new AesManaged();
+        //    aes.KeySize = 256;
+        //
+        //    aes.Mode = CipherMode.ECB;
+        //    aes.Padding = PaddingMode.PKCS7;
+        //
+        //    byte[] keyArr = Convert.FromBase64String(KeyStr);
+        //    Console.WriteLine("Key arr size: " + keyArr.Length);
+        //    byte[] KeyArrBytes32Value = new byte[32];
+        //    Array.Copy(keyArr, KeyArrBytes32Value, 24);
+        //
+        //    // Initialization vector
+        //    byte[] IVBytes16Value = new byte[16];
+        //    Array.Clear(IVBytes16Value, 0, IVBytes16Value.Length);
+        //
+        //    aes.Key = KeyArrBytes32Value;
+        //    aes.IV = IVBytes16Value;
+        //
+        //    ICryptoTransform decrypto = aes.CreateDecryptor();
+        //
+        //    byte[] encryptedBytes = Convert.FromBase64CharArray(CipherText.ToCharArray(), 0, CipherText.Length);
+        //    byte[] decryptedData = decrypto.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+        //    
+        //    return ASCIIEncoding.UTF8.GetString(decryptedData);
+        //}
+
+        public static string Encrypt(string data, string key)
         {
-            AesManaged aes = new AesManaged();
-            aes.KeySize = 256;
- 
-            aes.Mode = CipherMode.ECB;
-            aes.Padding = PaddingMode.PKCS7;
-
-            byte[] keyArr = Convert.FromBase64String(KeyStr);
-            byte[] KeyArrBytes32Value = new byte[32];
-            Array.Copy(keyArr, KeyArrBytes32Value, 24);
-
-            // Initialization vector.   
-            byte[] ivArr = { 1, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1, 7, 7, 7, 7 };
-            byte[] IVBytes16Value = new byte[16];
-            Array.Copy(ivArr, IVBytes16Value, 16);
-
-            aes.Key = KeyArrBytes32Value;
-            aes.IV = IVBytes16Value;
-
-            ICryptoTransform encrypto = aes.CreateEncryptor();
-
-            byte[] plainTextByte = ASCIIEncoding.UTF8.GetBytes(PlainText);
-            byte[] CipherText = encrypto.TransformFinalBlock(plainTextByte, 0, plainTextByte.Length);
-            return Convert.ToBase64String(CipherText);
+            using (AesCryptoServiceProvider csp = new AesCryptoServiceProvider())
+            {
+                byte[] keyArr = Convert.FromBase64String(key);
+                byte[] KeyArrBytes32Value = new byte[32];
+                Array.Copy(keyArr, KeyArrBytes32Value, 24);
+                csp.Key = keyArr;
+                csp.Padding = PaddingMode.PKCS7;
+                csp.Mode = CipherMode.ECB;
+                ICryptoTransform encrypter = csp.CreateEncryptor();
+                return Convert.ToBase64String(encrypter.TransformFinalBlock(ASCIIEncoding.UTF8.GetBytes(data), 0, ASCIIEncoding.UTF8.GetBytes(data).Length));
+            }
         }
 
-        public static string Decrypt(string CipherText, string KeyStr)
+        public static string Decrypt(string data, string key)
         {
-            AesManaged aes = new AesManaged();
-            aes.KeySize = 256;
+            string plaintext = null;
+            using (AesCryptoServiceProvider csp = new AesCryptoServiceProvider())
+            {
+                byte[] keyArr = Convert.FromBase64String(key);
+                byte[] KeyArrBytes32Value = new byte[32];
+                Array.Copy(keyArr, KeyArrBytes32Value, 24);
+                csp.Key = Convert.FromBase64String(key);
+                csp.Padding = PaddingMode.PKCS7;
+                csp.Mode = CipherMode.ECB;
+                ICryptoTransform decrypter = csp.CreateDecryptor();
 
-            aes.Mode = CipherMode.ECB;
-            aes.Padding = PaddingMode.PKCS7;
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(ASCIIEncoding.UTF8.GetBytes(data)))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decrypter, CryptoStreamMode.Read))
+                    {
 
-            byte[] keyArr = Convert.FromBase64String(KeyStr);
-            byte[] KeyArrBytes32Value = new byte[32];
-            Array.Copy(keyArr, KeyArrBytes32Value, 24);
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
 
-            // Initialization vector.   
-            byte[] ivArr = { 1, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1, 7, 7, 7, 7 };
-            byte[] IVBytes16Value = new byte[16];
-            Array.Copy(ivArr, IVBytes16Value, 16);
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
 
-            aes.Key = KeyArrBytes32Value;
-            aes.IV = IVBytes16Value;
-
-            ICryptoTransform decrypto = aes.CreateDecryptor();
-
-            byte[] encryptedBytes = Convert.FromBase64CharArray(CipherText.ToCharArray(), 0, CipherText.Length);
-            byte[] decryptedData = decrypto.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-            
-            return ASCIIEncoding.UTF8.GetString(decryptedData);
+                return plaintext;
+            }
         }
 
-        public static string PinToKey(string Pin, string Salt = "", int Iterations = 2048)
+        private static string ByteArrayToString(byte[] ba)
         {
-            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-            byte[] salt;
-            if (Salt != "")
-            {
-                salt = Encoding.ASCII.GetBytes(Salt);
-                provider.GetBytes(salt);
-            }
-            else
-            {
-                int SALT_SIZE = 24;
-                salt = new byte[SALT_SIZE];
-                provider.GetBytes(salt);
-            }
+            return BitConverter.ToString(ba).Replace("-", "");
+        }
 
-            // Generate the hash
-            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(Encoding.ASCII.GetBytes(Pin), salt, (int) Iterations / 2, HashAlgorithmName.SHA256);
+        public static string PinToAesKey(string pin)
+        {
+            byte[] salt = new byte[0]; //empty salt
 
-            //BitConverter and Replace used to convert to hex string
-            pbkdf2 = new Rfc2898DeriveBytes(BitConverter.ToString(pbkdf2.GetBytes(16)).Replace("-", ""), salt, (int)Iterations / 2, HashAlgorithmName.SHA256);
-            return Convert.ToBase64String(pbkdf2.GetBytes(32));
+            string firstHash = ByteArrayToString(KeyDerivation.Pbkdf2(
+            password: pin,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 1024,
+            numBytesRequested: 16));
+
+
+            byte[] key = KeyDerivation.Pbkdf2(
+            password: firstHash.ToLower(),
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 1024,
+            numBytesRequested: 32);
+
+            return Convert.ToBase64String(key);
         }
 
         public static Key ExtractKeyFromEncryptedPassphrase(string EncryptedData, string B64Key)
