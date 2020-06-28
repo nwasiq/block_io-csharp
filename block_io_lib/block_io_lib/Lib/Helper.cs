@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Linq;
 using System.IO;
+using NBitcoin.Crypto;
 
 namespace block_io_lib
 {
@@ -69,7 +70,7 @@ namespace block_io_lib
             }
         }
 
-        private static string ByteArrayToString(byte[] ba)
+        private static string ByteArrayToHexString(byte[] ba)
         {
             return BitConverter.ToString(ba).Replace("-", "");
         }
@@ -78,7 +79,7 @@ namespace block_io_lib
         {
             byte[] salt = new byte[0]; //empty salt
 
-            string firstHash = ByteArrayToString(KeyDerivation.Pbkdf2(
+            string firstHash = ByteArrayToHexString(KeyDerivation.Pbkdf2(
             password: pin,
             salt: salt,
             prf: KeyDerivationPrf.HMACSHA256,
@@ -118,21 +119,31 @@ namespace block_io_lib
             return new Key(Hashed);
         }
 
-        public static dynamic[] SignInputs(Key PrivKey, dynamic[] Inputs)
+        //public static dynamic SignInputs(Key PrivKey, dynamic Inputs)
+        //{
+        //    var PubKey = PrivKey.PubKey.ToHex();
+        //    foreach (dynamic input in Inputs)
+        //    {
+        //        foreach(dynamic signer in input.signers)
+        //        {
+        //            if (signer.signer_public_key == PubKey)
+        //            {
+        //                ECDSASignature sig = PrivKey.Sign(Hashes.Hash256(Encoding.UTF8.GetBytes(input.data_to_sign.ToString())));
+        //                signer.signed_data = ByteArrayToHexString(sig.ToDER());
+        //            }
+        //
+        //        }
+        //    }
+        //    return Inputs;
+        //}
+        public static string SignInputs(Key PrivKey, string DataToSign, string PubKeyToVerify)
         {
             var PubKey = PrivKey.PubKey.ToHex();
-            foreach (dynamic input in Inputs)
-            {
-                foreach(dynamic signer in input.signers)
-                {
-                    if (signer.signer_public_key == PubKey)
-                    {
-                        signer.signed_data = PrivKey.Sign(input.data_to_sign);
-                    }
+            if(PubKey == PubKeyToVerify)
+                return ByteArrayToHexString(PrivKey.Sign(Hashes.Hash256(Encoding.UTF8.GetBytes(DataToSign))).ToDER());
 
-                }
-            }
-            return Inputs;
+            return "";
+
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using NBitcoin.Crypto;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -162,7 +163,13 @@ namespace block_io_lib
                 if (pubKey != res.Data.encrypted_passphrase.signer_public_key.ToString())
                     throw new Exception("Public key mismatch. Invalid Secret PIN detected.");
 
-                res.Data.inputs = Helper.SignInputs(privKey, res.Data.inputs);
+                foreach(dynamic input in res.Data.inputs)
+                {
+                    foreach(dynamic signer in input.signers)
+                    {
+                        signer.signed_data = Helper.SignInputs(privKey, input.data_to_sign.ToString(), pubKey);
+                    }
+                }
 
                 aesKey = "";
                 privKey = null;
@@ -172,7 +179,7 @@ namespace block_io_lib
                 throw new Exception(ex.ToString());
             }
             
-            return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: '" + JsonConvert.SerializeObject(res.Data)+ "'}");
+            return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: " + res.Data + "}");
 
         }
 
@@ -200,11 +207,10 @@ namespace block_io_lib
 
             var request = new RestRequest(Method == "POST" ? _constructPath(Path, "{api_key: '" + Key + "'}") : Path, (Method)Enum.Parse(typeof(Method), Method));
 
-            if(Method == "POST")
+            if (Method == "POST" && Path != "sign_and_finalize_withdrawal")
             {
-                request.AddHeader("Content-Type", "application/json");
                 string queryString = JsonToQuery(args);
-                if(args != "{}")
+                if (args != "{}" )
                 {
                     string[] querySegments = queryString.Split('&');
                     foreach (string segment in querySegments)
@@ -223,7 +229,8 @@ namespace block_io_lib
             {
                 dynamic qs = JsonConvert.DeserializeObject(args);
                 qs.api_key = Key;
-                request.AddJsonBody(qs);
+                request.AddParameter("application/json; charset=utf-8", qs, ParameterType.RequestBody);
+                request.RequestFormat = DataFormat.Json;
             }
             var response = await RestClient.ExecuteGetAsync(request);
             CheckBadRequest(response);
