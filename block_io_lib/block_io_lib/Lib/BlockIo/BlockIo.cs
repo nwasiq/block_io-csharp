@@ -5,6 +5,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using block_io_lib.ResponseObject;
 using NBitcoin.Crypto;
 using Newtonsoft.Json;
 using RestSharp;
@@ -227,10 +228,12 @@ namespace block_io_lib
             }
             else
             {
-                dynamic qs = JsonConvert.DeserializeObject(args);
-                qs.api_key = Key;
-                request.AddParameter("application/json; charset=utf-8", qs, ParameterType.RequestBody);
-                request.RequestFormat = DataFormat.Json;
+                SignatureData obj = JsonConvert.DeserializeObject<SignatureData>(args);
+                var json = JsonConvert.SerializeObject(obj);
+                Console.WriteLine("Created JSON: " + json);
+                //qs.api_key = Key;
+                request.AddHeader("Content-Type", "application/json");
+                request.AddJsonBody(json);
             }
             var response = await RestClient.ExecuteGetAsync(request);
             CheckBadRequest(response);
