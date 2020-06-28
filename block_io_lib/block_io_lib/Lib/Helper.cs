@@ -9,57 +9,13 @@ namespace block_io_lib
 {
     class Helper
     {
-        public static string ComputeSha256Hash(byte[] rawData)
-        {
-            // Create a SHA256   
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // ComputeHash - returns byte array  
-                byte[] bytes = sha256Hash.ComputeHash(rawData);
-
-                // Convert byte array to a string   
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-
-        public static byte[] StringToByteArray(string hex)
-        {
-            if (hex.Length % 2 == 1)
-                throw new Exception("The binary key cannot have an odd number of digits");
-
-            byte[] arr = new byte[hex.Length >> 1];
-
-            for (int i = 0; i < hex.Length >> 1; ++i)
-            {
-                arr[i] = (byte)((GetHexVal(hex[i << 1]) << 4) + (GetHexVal(hex[(i << 1) + 1])));
-            }
-
-            return arr;
-        }
-
-        public static int GetHexVal(char hex)
-        {
-            int val = (int)hex;
-            //For uppercase A-F letters:
-            //return val - (val < 58 ? 48 : 55);
-            //For lowercase a-f letters:
-            //return val - (val < 58 ? 48 : 87);
-            //Or the two combined, but a bit slower:
-            return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
-        }
-
         public static string Encrypt(string data, string key)
         {
             using (AesCryptoServiceProvider csp = new AesCryptoServiceProvider())
             {
                 byte[] keyArr = Convert.FromBase64String(key);
                 byte[] KeyArrBytes32Value = new byte[32];
-                Array.Copy(keyArr, KeyArrBytes32Value, 24);
+                Array.Copy(keyArr, KeyArrBytes32Value, 32);
                 csp.Key = keyArr;
                 csp.Padding = PaddingMode.PKCS7;
                 csp.Mode = CipherMode.ECB;
@@ -75,7 +31,7 @@ namespace block_io_lib
             {
                 byte[] keyArr = Convert.FromBase64String(key);
                 byte[] KeyArrBytes32Value = new byte[32];
-                Array.Copy(keyArr, KeyArrBytes32Value, 24);
+                Array.Copy(keyArr, KeyArrBytes32Value, 32);
                 csp.Key = Convert.FromBase64String(key);
                 csp.Padding = PaddingMode.PKCS7;
                 csp.Mode = CipherMode.ECB;
@@ -92,7 +48,19 @@ namespace block_io_lib
 
                             // Read the decrypted bytes from the decrypting stream
                             // and place them in a string.
-                            plaintext = srDecrypt.ReadToEnd();
+                            try
+                            {
+                                plaintext = srDecrypt.ReadToEnd();
+                            }
+                            
+                            catch (Exception ex)
+                            {
+                                if(ex.Message.Contains("Padding is invalid and cannot be removed."))
+                                {
+                                    throw new Exception("Pin supplied is incorrect.");
+                                }
+                                
+                            }
                         }
                     }
                 }
@@ -128,12 +96,26 @@ namespace block_io_lib
             return Convert.ToBase64String(key);
         }
 
+        public static byte[] SHA256_hash(byte[] value)
+        {
+            return new SHA256CryptoServiceProvider().ComputeHash(value);
+        }
+
+        public static byte[] HexStringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
+        }
+
         public static Key ExtractKeyFromEncryptedPassphrase(string EncryptedData, string B64Key)
         {
-            string Decrypted = Decrypt(EncryptedData, B64Key);
-            byte[] Unhexlified = StringToByteArray(Decrypted);
-            
-            return new Key(Encoding.ASCII.GetBytes(ComputeSha256Hash(Unhexlified)));
+            string Decrypted = Decrypt(EncryptedData, B64Key); // this returns a hex string
+            byte[] Unhexlified = HexStringToByteArray(Decrypted);
+            byte[] Hashed = SHA256_hash(Unhexlified);
+
+            return new Key(Hashed);
         }
 
         public static dynamic[] SignInputs(Key PrivKey, dynamic[] Inputs)

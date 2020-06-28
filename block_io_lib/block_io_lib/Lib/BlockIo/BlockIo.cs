@@ -139,6 +139,7 @@ namespace block_io_lib
             {
                 dynamic argsObj = JsonConvert.DeserializeObject(args);
                 string pin = argsObj.pin != null ? argsObj.pin : this.Pin;
+                argsObj.pin = "";
                 Task<BlockIoResponse<dynamic>> RequestTask = _request(Method, Path, args);
                  res = RequestTask.Result;
                 if(res.Status == "fail" || res.Data.reference_id == null
@@ -158,7 +159,7 @@ namespace block_io_lib
                 string aesKey = this.AesKey != null ? this.AesKey: Helper.PinToAesKey(pin);
                 Key privKey = Helper.ExtractKeyFromEncryptedPassphrase(enrypted_passphrase, aesKey);
                 string pubKey = privKey.PubKey.ToHex();
-                if (pubKey != res.Data.encrypted_passphrase.signer_public_key)
+                if (pubKey != res.Data.encrypted_passphrase.signer_public_key.ToString())
                     throw new Exception("Public key mismatch. Invalid Secret PIN detected.");
 
                 res.Data.inputs = Helper.SignInputs(privKey, res.Data.inputs);

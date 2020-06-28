@@ -84,12 +84,17 @@ namespace block_io_lib
              * TESTING THIS
              */
 
-            string aesKeyy = Helper.PinToAesKey("123456");
-            string ct = "I\'m a little tea pot short and stout";
-            Console.WriteLine("PIN TO AES: " + aesKeyy);
-            string encrypted = Helper.Encrypt(ct, aesKeyy);
-            Console.WriteLine("This is what encrypt with aes key does " + encrypted);
-            Console.WriteLine("This is what decrypt with aes key does " + Helper.Decrypt(encrypted, aesKeyy));
+            //string encryptionKey = Helper.PinToAesKey("27942794");
+            //Console.WriteLine("Calling pin to key gives this encryption key: " + encryptionKey );
+            ////received key: +1sOM30JGfoIzrn+y/9qCH/JNFt6c1DPlLe0xoK0ins=
+            //string encryptedData = Helper.Encrypt("block.io", encryptionKey);
+            //Console.WriteLine("Calling encrypt data with received key: " + encryptedData);
+            //Console.WriteLine("Calling decrypt data with received key. Decrypted data: " + Helper.Decrypt(encryptedData, encryptionKey));
+
+            BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "27942794");
+            Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
+            
+
         }
 
     }
