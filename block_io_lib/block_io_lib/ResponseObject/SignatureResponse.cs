@@ -20,8 +20,8 @@ namespace block_io_lib.ResponseObject
     class SigInput
     {
         public string data_to_sign { get; set; }
-        public string input_no { get; set; }
-        public string signatures_needed { get; set; }
+        public int input_no { get; set; }
+        public int signatures_needed { get; set; }
         public List<Signer> signers { get; set; }
     }
 
