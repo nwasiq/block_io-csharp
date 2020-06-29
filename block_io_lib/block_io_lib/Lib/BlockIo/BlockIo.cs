@@ -184,7 +184,43 @@ namespace block_io_lib
 
         private Task<BlockIoResponse<dynamic>> _sweep(string Method, string Path, string args)
         {
-            return _request(Method, Path, args);
+            Key KeyFromWif = null;
+            BlockIoResponse<dynamic> res = null;
+            try
+            {
+                dynamic argsObj = JsonConvert.DeserializeObject(args);
+
+                if(argsObj.to_address == null)
+                {
+                    throw new Exception("Missing mandatory private_key argument.");
+                }
+
+                string PrivKeyStr = argsObj.private_key.ToString();
+                KeyFromWif = ECKey.FromWif(PrivKeyStr);
+                argsObj.public_key = KeyFromWif.PubKey.ToHex();
+                argsObj.private_key = "";
+
+                Task<BlockIoResponse<dynamic>> RequestTask = _request(Method, Path, args);
+                res = RequestTask.Result;
+                if (res.Data.reference_id == null)
+                    return RequestTask;
+
+                foreach (dynamic input in res.Data.inputs)
+                {
+                    foreach (dynamic signer in input.signers)
+                    {
+                        signer.signed_data = Helper.SignInputs(KeyFromWif, input.data_to_sign.ToString(), argsObj.public_key.ToString());
+                    }
+                }
+
+                KeyFromWif = null;
+
+                return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: " + res.Data + "}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
         }
 
         public BlockIoResponse<dynamic> ValidateKey()
@@ -230,10 +266,7 @@ namespace block_io_lib
             else
             {
                 SignatureData obj = JsonConvert.DeserializeObject<SignatureData>(args);
-                Console.WriteLine("The SIGNATURE: " + obj.signature_data.inputs[0].signers[0].signed_data);
-                //var json = JsonConvert.SerializeObject(obj);
-                //Console.WriteLine("Created JSONS obj: " + JsonConvert.DeserializeObject(args));
-                //qs.api_key = Key;
+                //Console.WriteLine("The SIGNATURE: " + obj.signature_data.inputs[0].signers[0].signed_data);
                 request.AddJsonBody(obj);
             }
             var response = Path != "sign_and_finalize_withdrawal" ? await RestClient.ExecuteGetAsync(request) : await RestClient.ExecutePostAsync(request);

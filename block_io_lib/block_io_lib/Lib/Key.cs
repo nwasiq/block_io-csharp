@@ -14,7 +14,7 @@ namespace block_io_lib
         {
             
         }
-        public static Key FromWif(string PrivKey)
+        public Key FromWif(string PrivKey)
         {
             byte[] ExtendedKeyBytes = Base58CheckEncoding.Decode(PrivKey);
             bool Compressed = false;
