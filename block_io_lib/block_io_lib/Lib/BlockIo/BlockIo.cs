@@ -32,7 +32,7 @@ namespace block_io_lib
         private readonly string ApiUrl;
 
         private dynamic Options;
-        private string Key { get; set; }
+        private string ApiKey { get; set; }
         private int Version { get; set; }
         private string Server { get; set; }
         private string Port { get; set; }
@@ -56,7 +56,7 @@ namespace block_io_lib
                 //config is an obj
 
                 ConfigObj = JsonConvert.DeserializeObject(Config);
-                Key = ConfigObj.api_key;
+                ApiKey = ConfigObj.api_key;
                 if (ConfigObj.version != null) this.Version = ConfigObj.version; else this.Version = this.DefaultVersion;
                 if (ConfigObj.server != null) this.Server = ConfigObj.server; else this.Server = this.DefaultServer;
                 if (ConfigObj.port != null) this.Port = ConfigObj.port; else this.Port = this.DefaultPort;
@@ -76,7 +76,7 @@ namespace block_io_lib
             {
                 //config is a string, not an obj
 
-                Key = Config;
+                ApiKey = Config;
                 if (Version == -1) this.Version = this.DefaultVersion; else this.Version = Version;
                 this.Server = this.DefaultServer;
                 this.Port = this.DefaultPort;
@@ -103,7 +103,7 @@ namespace block_io_lib
 
             ApiUrl = "https://" + ServerString + Host + PortString + "/api/v" + Version.ToString();
 
-            RestClient = new RestClient(ApiUrl) { Authenticator = new BlockIoAuthenticator(Key) };
+            RestClient = new RestClient(ApiUrl) { Authenticator = new BlockIoAuthenticator(ApiKey) };
         }
         private string JsonToQuery(string jsonQuery)
         {
@@ -214,13 +214,12 @@ namespace block_io_lib
                 }
 
                 KeyFromWif = null;
-
-                return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: " + res.Data + "}");
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
             }
+            return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: " + res.Data + "}");
         }
 
         public BlockIoResponse<dynamic> ValidateKey()
@@ -228,25 +227,14 @@ namespace block_io_lib
             return _request("GET", "get_balance").Result;
         }
 
-        public string _constructPath(string Path, string Query = null)
-        {
-            //Query is a json string in format: "{name: 'John'}"
-
-            string QueryString = Query != null ? "?" + JsonToQuery(Query) : "";
-            return Path + QueryString;
-        }
-
         private async Task<BlockIoResponse<dynamic>> _request(string Method, string Path, string args="{}")
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var request = new RestRequest(Method == "POST" ? _constructPath(Path, "{api_key: '" + Key + "'}") : Path, (Method)Enum.Parse(typeof(Method), Method));
+            var request = new RestRequest(Path, (Method)Enum.Parse(typeof(Method), Method));
 
             if (Method == "POST" && Path != "sign_and_finalize_withdrawal")
             {
-                dynamic dynArgs = JsonConvert.DeserializeObject(args);
-                dynArgs.api_key = "";
-                args = JsonConvert.SerializeObject(dynArgs);
                 string queryString = JsonToQuery(args);
                 if (args != "{}" )
                 {
@@ -258,7 +246,7 @@ namespace block_io_lib
                         {
                             string key = parts[0].Trim(new char[] { '?', ' ' });
                             string val = parts[1].Trim();
-                            if(val != "") request.AddParameter(key, val, ParameterType.QueryString);
+                            request.AddParameter(key, val, ParameterType.QueryString);
                         }
                     }
                 }
@@ -266,7 +254,7 @@ namespace block_io_lib
             else
             {
                 SignatureData obj = JsonConvert.DeserializeObject<SignatureData>(args);
-                //Console.WriteLine("The SIGNATURE: " + obj.signature_data.inputs[0].signers[0].signed_data);
+                Console.WriteLine("The SIGNATURE: " + obj.signature_data.inputs[0].signers[0].signed_data);
                 request.AddJsonBody(obj);
             }
             var response = Path != "sign_and_finalize_withdrawal" ? await RestClient.ExecuteGetAsync(request) : await RestClient.ExecutePostAsync(request);
