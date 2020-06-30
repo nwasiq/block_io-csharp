@@ -5,7 +5,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using block_io_lib.ResponseObject;
 using NBitcoin.Crypto;
 using Newtonsoft.Json;
 using RestSharp;
@@ -174,7 +173,7 @@ namespace block_io_lib
 
                 aesKey = "";
                 privKey = null;
-                return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: " + res.Data + "}");
+                return _request(Method, "sign_and_finalize_withdrawal", res.Data.ToString());
             }
             catch (Exception ex)
             {
@@ -253,9 +252,14 @@ namespace block_io_lib
             }
             else
             {
-                SignatureData obj = JsonConvert.DeserializeObject<SignatureData>(args);
-                Console.WriteLine("The SIGNATURE: " + obj.signature_data.inputs[0].signers[0].signed_data);
-                request.AddJsonBody(obj);
+                ///////////     Debugging    /////////////
+                dynamic signatureData = JsonConvert.DeserializeObject(args);
+                Console.WriteLine("Signed Data: " + signatureData.inputs[0].signers[0].signed_data);
+                /////////////////////////////////////////
+
+                request.AddJsonBody(new { 
+                    signature_data = args
+                });
             }
             var response = Path != "sign_and_finalize_withdrawal" ? await RestClient.ExecuteGetAsync(request) : await RestClient.ExecutePostAsync(request);
             CheckBadRequest(response);
