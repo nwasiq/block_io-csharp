@@ -253,6 +253,7 @@ namespace block_io_lib
             {
                 ///////////     Debugging    /////////////
                 dynamic signatureData = JsonConvert.DeserializeObject(args);
+                Console.WriteLine("Data to Sign: " + signatureData.inputs[0].data_to_sign);
                 Console.WriteLine("Signed Data: " + signatureData.inputs[0].signers[0].signed_data);
                 /////////////////////////////////////////
 

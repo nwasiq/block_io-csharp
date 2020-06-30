@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Linq;
 using System.IO;
 using NBitcoin.Crypto;
+using NBitcoin;
+using NBitcoin.DataEncoders;
 
 namespace block_io_lib
 {
@@ -72,7 +74,7 @@ namespace block_io_lib
 
         private static string ByteArrayToHexString(byte[] ba)
         {
-            return BitConverter.ToString(ba).Replace("-", "");
+            return BitConverter.ToString(ba).Replace("-", "").ToLower();
         }
 
         public static string PinToAesKey(string pin)
@@ -122,7 +124,7 @@ namespace block_io_lib
         {
             var PubKey = PrivKey.PubKey.ToHex();
             if(PubKey == PubKeyToVerify)
-                return ByteArrayToHexString(PrivKey.Sign(Hashes.Hash256(HexStringToByteArray(DataToSign)), false).ToDER());
+                return ByteArrayToHexString(PrivKey.Sign(new uint256 (HexStringToByteArray(DataToSign)), false).ToDER());
 
             return "";
 
