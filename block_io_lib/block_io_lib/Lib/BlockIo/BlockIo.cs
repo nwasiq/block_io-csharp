@@ -211,14 +211,13 @@ namespace block_io_lib
                         signer.signed_data = Helper.SignInputs(KeyFromWif, input.data_to_sign.ToString(), argsObj.public_key.ToString());
                     }
                 }
-
                 KeyFromWif = null;
+                return _request(Method, "sign_and_finalize_withdrawal", res.Data.ToString());
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
             }
-            return _request(Method, "sign_and_finalize_withdrawal", "{signature_data: " + res.Data + "}");
         }
 
         public BlockIoResponse<dynamic> ValidateKey()
