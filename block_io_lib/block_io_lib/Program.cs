@@ -20,7 +20,7 @@ namespace block_io_lib
 
             // Key tests
 
-            Program.RunTests(WifTestStr, PassphraseStr, DataToSignStr);
+            //Program.RunTests(WifTestStr, PassphraseStr, DataToSignStr);
 
             // Withdraw
 
@@ -30,11 +30,10 @@ namespace block_io_lib
             // Sweep
 
             BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "Was1qWas1q");
-            testKey = new Key();
-            //string address = testKey.PubKey.GetAddress(Network.TestNet).ToString();
-            string sweepWif = testKey.GetWif(Network.TestNet).ToString();
-            test.SweepFromAddress("{private_key: '" + sweepWif + "', to_address: '" + "2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9" + "'}");
-            //Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
+            string wif = "cTYLVcC17cYYoRjaBu15rEcD5WuDyowAw562q2F1ihcaomRJENu5";
+            string sweepArgs = "{ private_key: '" + wif + "', to_address: 'QhSWVppS12Fqv6dh3rAyoB18jXh5mB1hoC', from_address: 'tltc1qpygwklc39wl9p0wvlm0p6x42sh9259xdjl059s'}";
+            
+            test.SweepFromAddress(sweepArgs);
 
         }
 
