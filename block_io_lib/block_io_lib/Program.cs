@@ -34,8 +34,8 @@ namespace block_io_lib
             BlockIo test = new BlockIo(api_key, pin);
             string wif = "cTYLVcC17cYYoRjaBu15rEcD5WuDyowAw562q2F1ihcaomRJENu5";
             string sweepArgs = "{ private_key: '" + wif + "', to_address: 'QhSWVppS12Fqv6dh3rAyoB18jXh5mB1hoC', from_address: 'tltc1qpygwklc39wl9p0wvlm0p6x42sh9259xdjl059s'}";
-            
-            test.SweepFromAddress(sweepArgs);
+
+            Console.WriteLine(test.SweepFromAddress(sweepArgs).Data);
 
         }
 
