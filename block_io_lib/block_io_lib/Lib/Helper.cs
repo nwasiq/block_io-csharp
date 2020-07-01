@@ -120,6 +120,13 @@ namespace block_io_lib
 
             return new Key(Hashed);
         }
+        public static Key ExtractKeyFromPassphrase(string HexPass)
+        {
+            byte[] Unhexlified = HexStringToByteArray(HexPass);
+            byte[] Hashed = SHA256_hash(Unhexlified);
+
+            return new Key(Hashed);
+        }
         public static string SignInputs(Key PrivKey, string DataToSign, string PubKeyToVerify)
         {
             var PubKey = PrivKey.PubKey.ToHex();
