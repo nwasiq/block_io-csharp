@@ -32,7 +32,6 @@ namespace block_io_lib
         private string Port { get; set; }
         private string Pin { get; set; }
         private string AesKey { get; set; }
-        private Key ECKey { get; set; }
 
         private int DefaultVersion = 2;
         private string DefaultServer = "";
@@ -190,7 +189,7 @@ namespace block_io_lib
                 }
 
                 string PrivKeyStr = argsObj.private_key.ToString();
-                KeyFromWif = ECKey.FromWif(PrivKeyStr);
+                KeyFromWif = new Key().FromWif(PrivKeyStr);
                 argsObj.public_key = KeyFromWif.PubKey.ToHex();
                 argsObj.private_key = "";
 
