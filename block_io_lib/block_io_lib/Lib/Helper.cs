@@ -4,9 +4,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Linq;
 using System.IO;
-using NBitcoin.Crypto;
 using NBitcoin;
-using NBitcoin.DataEncoders;
 
 namespace block_io_lib
 {
@@ -110,22 +108,6 @@ namespace block_io_lib
                              .Where(x => x % 2 == 0)
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
-        }
-
-        public static Key ExtractKeyFromEncryptedPassphrase(string EncryptedData, string B64Key)
-        {
-            string Decrypted = Decrypt(EncryptedData, B64Key); // this returns a hex string
-            byte[] Unhexlified = HexStringToByteArray(Decrypted);
-            byte[] Hashed = SHA256_hash(Unhexlified);
-
-            return new Key(Hashed);
-        }
-        public static Key ExtractKeyFromPassphrase(string HexPass)
-        {
-            byte[] Unhexlified = HexStringToByteArray(HexPass);
-            byte[] Hashed = SHA256_hash(Unhexlified);
-
-            return new Key(Hashed);
         }
         public static string SignInputs(Key PrivKey, string DataToSign, string PubKeyToVerify)
         {

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using NBitcoin.Crypto;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -158,7 +153,7 @@ namespace block_io_lib
                 
                 string enrypted_passphrase = res.Data.encrypted_passphrase.passphrase;
                 string aesKey = this.AesKey != null ? this.AesKey: Helper.PinToAesKey(pin);
-                Key privKey = Helper.ExtractKeyFromEncryptedPassphrase(enrypted_passphrase, aesKey);
+                Key privKey = new Key().ExtractKeyFromEncryptedPassphrase(enrypted_passphrase, aesKey);
                 string pubKey = privKey.PubKey.ToHex();
                 if (pubKey != res.Data.encrypted_passphrase.signer_public_key.ToString())
                     throw new Exception("Public key mismatch. Invalid Secret PIN detected.");
