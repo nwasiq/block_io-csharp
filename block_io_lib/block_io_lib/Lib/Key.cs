@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NBitcoin;
-using System.Security.Cryptography;
 using Base58Check;
 using System.Linq;
 
@@ -13,6 +9,12 @@ namespace block_io_lib
         public Key(byte[] data, int count = -1, bool fCompressedIn = true) : base(data, count = -1, fCompressedIn = true)
         {
             
+        }
+
+        //Random key
+        public Key(bool fCompressedIn = true) : base(fCompressedIn = true)
+        {
+
         }
         public Key FromWif(string PrivKey)
         {
@@ -25,7 +27,7 @@ namespace block_io_lib
             {
                 if (ExtendedKeyBytes[32] != 0x01)
                 {
-                    throw new System.ArgumentException("Invalid compression flag", "PrivKey");
+                    throw new ArgumentException("Invalid compression flag", "PrivKey");
                 }
                 ExtendedKeyBytes = ExtendedKeyBytes.Take(ExtendedKeyBytes.Count() - 1).ToArray();
                 Compressed = true;
@@ -33,10 +35,26 @@ namespace block_io_lib
 
             if (ExtendedKeyBytes.Length != 32)
             {
-                throw new System.ArgumentException("Invalid WIF payload length", "PrivKey");
+                throw new ArgumentException("Invalid WIF payload length", "PrivKey");
             }
 
             return new Key(ExtendedKeyBytes, -1, Compressed);
+        }
+
+        public Key ExtractKeyFromEncryptedPassphrase(string EncryptedData, string B64Key)
+        {
+            string Decrypted = Helper.Decrypt(EncryptedData, B64Key); // this returns a hex string
+            byte[] Unhexlified = Helper.HexStringToByteArray(Decrypted);
+            byte[] Hashed = Helper.SHA256_hash(Unhexlified);
+
+            return new Key(Hashed);
+        }
+        public Key ExtractKeyFromPassphrase(string HexPass)
+        {
+            byte[] Unhexlified = Helper.HexStringToByteArray(HexPass);
+            byte[] Hashed = Helper.SHA256_hash(Unhexlified);
+
+            return new Key(Hashed);
         }
     }
 }

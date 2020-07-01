@@ -91,8 +91,11 @@ namespace block_io_lib
             //Console.WriteLine("Calling encrypt data with received key: " + encryptedData);
             //Console.WriteLine("Calling decrypt data with received key. Decrypted data: " + Helper.Decrypt(encryptedData, encryptionKey));
 
-            BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "27942794");
-            Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
+            Key testKey = new Key().FromWif("L1cq4uDmSKMiViT4DuR8jqJv8AiiSZ9VeJr82yau5nfVQYaAgDdr");
+            Console.WriteLine("Private Key: " + testKey.ToHex());
+            Console.WriteLine("Public Key: " + testKey.PubKey.ToHex());
+            //BlockIo test = new BlockIo("{ api_key: '6094-2139-1c8c-21b1'}", "27942794");
+            //Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
             
 
         }
