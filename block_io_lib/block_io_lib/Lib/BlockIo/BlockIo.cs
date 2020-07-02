@@ -192,12 +192,12 @@ namespace block_io_lib
                 KeyFromWif = new Key().FromWif(PrivKeyStr);
                 argsObj.public_key = KeyFromWif.PubKey.ToHex();
                 argsObj.private_key = "";
+                args = JsonConvert.SerializeObject(argsObj);
 
                 Task<BlockIoResponse<dynamic>> RequestTask = _request(Method, Path, args);
                 res = RequestTask.Result;
                 if (res.Data.reference_id == null)
                     return RequestTask;
-
                 foreach (dynamic input in res.Data.inputs)
                 {
                     foreach (dynamic signer in input.signers)
@@ -206,7 +206,7 @@ namespace block_io_lib
                     }
                 }
                 KeyFromWif = null;
-                return _request(Method, "sign_and_finalize_withdrawal", res.Data.ToString());
+                return _request(Method, "sign_and_finalize_sweep", res.Data.ToString());
             }
             catch (Exception ex)
             {
@@ -225,7 +225,7 @@ namespace block_io_lib
 
             var request = new RestRequest(Path, (Method)Enum.Parse(typeof(Method), Method));
 
-            if (Method == "POST" && Path != "sign_and_finalize_withdrawal")
+            if (Method == "POST" && !Path.Contains("sign_and_finalize"))
             {
                 string queryString = JsonToQuery(args);
                 if (args != "{}" )
@@ -249,7 +249,7 @@ namespace block_io_lib
                     signature_data = args
                 });
             }
-            var response = Path != "sign_and_finalize_withdrawal" ? await RestClient.ExecuteGetAsync(request) : await RestClient.ExecutePostAsync(request);
+            var response = !Path.Contains("sign_and_finalize") ? await RestClient.ExecuteGetAsync(request) : await RestClient.ExecutePostAsync(request);
             CheckBadRequest(response);
             return GetData<BlockIoResponse<dynamic>>(response);
         }

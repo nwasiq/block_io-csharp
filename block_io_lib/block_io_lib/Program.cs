@@ -16,7 +16,7 @@ namespace block_io_lib
             string WifTestStr = "L1cq4uDmSKMiViT4DuR8jqJv8AiiSZ9VeJr82yau5nfVQYaAgDdr";
             string PassphraseStr = "deadbeef";
             string DataToSignStr = "e76f0f78b7e7474f04cc14ad1343e4cc28f450399a79457d1240511a054afd63";
-            string api_key = "6094-2139-1c8c-21b1";
+            string api_key = "27d6-fc3a-1606-e6d4";
             string pin = "";
             Key testKey;
 
@@ -27,14 +27,16 @@ namespace block_io_lib
             // Withdraw
 
             //BlockIo test = new BlockIo(api_key, pin);
-            //Console.WriteLine(test.Withdraw("{amounts: 0.0001, to_addresses:'2Mx7Wqey9Pg3PfH6iXff5avNB8havXLbKq9'}").Data);
+            //
+            //Console.WriteLine(test.WithdrawFromAddresses("{amounts: 2.0, from_addresses:['2N8pEWg9ZPyxa2yioZWDYAzNFyTnYp6TkHF'], to_addresses:['my9gXk65EzZUL962MSJadPXJFmJzPDc1WT']}").Data);
 
             // Sweep
 
             BlockIo test = new BlockIo(api_key, pin);
-            string wif = "cTYLVcC17cYYoRjaBu15rEcD5WuDyowAw562q2F1ihcaomRJENu5";
-            string sweepArgs = "{ private_key: '" + wif + "', to_address: 'QhSWVppS12Fqv6dh3rAyoB18jXh5mB1hoC', from_address: 'tltc1qpygwklc39wl9p0wvlm0p6x42sh9259xdjl059s'}";
-
+            string wif = "cUhedoiwPkprm99qfUKzixsrpN3w6wT2XrrMjqo3Yh1tHz8ykVKc";
+            string from_address = "my9gXk65EzZUL962MSJadPXJFmJzPDc1WT";
+            string sweepArgs = "{ private_key: '" + wif + "', to_address: '2N8pEWg9ZPyxa2yioZWDYAzNFyTnYp6TkHF'}";
+            
             Console.WriteLine(test.SweepFromAddress(sweepArgs).Data);
 
         }
