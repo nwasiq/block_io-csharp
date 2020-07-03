@@ -8,7 +8,7 @@ using NBitcoin;
 
 namespace block_io_lib
 {
-    class Helper
+    public class Helper
     {
         public static string Encrypt(string data, string key)
         {

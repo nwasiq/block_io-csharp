@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace block_io_lib
 {
-    class Key: NBitcoin.Key
+    public class Key: NBitcoin.Key
     {
         public Key(byte[] data, int count = -1, bool fCompressedIn = true) : base(data, count = -1, fCompressedIn = true)
         {
