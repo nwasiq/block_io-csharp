@@ -28,7 +28,7 @@ namespace BlockIoLib
             //string wif = "cUhedoiwPkprm99qfUKzixsrpN3w6wT2XrrMjqo3Yh1tHz8ykVKc";
             //string from_address = "my9gXk65EzZUL962MSJadPXJFmJzPDc1WT";
             //string sweepArgs = "{ private_key: '" + wif + "', to_address: '2N8pEWg9ZPyxa2yioZWDYAzNFyTnYp6TkHF'}";
-            //
+            
             //Console.WriteLine(test.SweepFromAddress(sweepArgs).Data);
 
         }
