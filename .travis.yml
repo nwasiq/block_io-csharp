@@ -5,4 +5,4 @@ before_install:
 before_script:
   - nuget restore BlockIoLib.sln
 after_script:
-  - nunit-console BlockIoLib.UnitTests/bin/Debug/netcoreapp3.1/BlockIoLib.UnitTests.dll
+  - nunit-console BlockIoLib.UnitTests/bin/Debug/netcoreapp3.0/BlockIoLib.UnitTests.dll
