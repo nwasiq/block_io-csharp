@@ -55,13 +55,18 @@ cache:
   - '%LocalAppData%\NuGet\v3-cache' # NuGet v3
 
 
-before_test:
-  - dotnet restore
-  - NuGet package restore
+before_build:
+  # Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: dotnet restore ./BlockIoLib/BlockIoLib.csproj --verbosity m
 
-# to run your custom scripts instead of automatic tests
 test_script:
-  - dotnet test
+  # restore packages for our unit tests
+  - cmd: dotnet restore ./BlockIoLib.UnitTests/BlockIoLib.UnitTests.csproj --verbosity m
+  # run the unit tests (requires changing into the test directory)
+  - cmd: cd BlockIoLib.UnitTests
+  - cmd: dotnet test
 
 
 # .NET Core `*.*proj` files patching:
