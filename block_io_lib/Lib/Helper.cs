@@ -113,7 +113,7 @@ namespace block_io_lib
         {
             var PubKey = PrivKey.PubKey.ToHex();
             if(PubKey == PubKeyToVerify)
-                return ByteArrayToHexString(PrivKey.Sign(new uint256 (HexStringToByteArray(DataToSign)), false).ToDER());
+                return ByteArrayToHexString(PrivKey.Sign(new uint256 (HexStringToByteArray(DataToSign))).ToDER());
 
             return "";
 

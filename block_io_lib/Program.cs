@@ -18,17 +18,15 @@ namespace block_io_lib
             string DataToSignStr = "e76f0f78b7e7474f04cc14ad1343e4cc28f450399a79457d1240511a054afd63";
             string api_key = "27d6-fc3a-1606-e6d4";
             string pin = "Was1qWas1q";
-            Key testKey;
-            Console.WriteLine(Helper.PinToAesKey("123456"));
             // Key tests
 
             Program.RunKeyTests(WifTestStr, PassphraseStr, DataToSignStr);
 
             // Withdraw
 
-            BlockIo test = new BlockIo(api_key, pin);
-            
-            Console.WriteLine(test.WithdrawFromAddresses("{amounts: 0.1, from_addresses:['2N8pEWg9ZPyxa2yioZWDYAzNFyTnYp6TkHF'], to_addresses:['my9gXk65EzZUL962MSJadPXJFmJzPDc1WT']}").Data);
+            //BlockIo test = new BlockIo(api_key, pin);
+            //
+            //Console.WriteLine(test.WithdrawFromAddresses("{amounts: 0.1, from_addresses:['2N8pEWg9ZPyxa2yioZWDYAzNFyTnYp6TkHF'], to_addresses:['my9gXk65EzZUL962MSJadPXJFmJzPDc1WT']}").Data);
 
             // Sweep
 
