@@ -9,6 +9,7 @@ branches:
   only:
     - master
     - production
+    - feature/unit-tests
 
 
 # Skipping commits affecting specific files (GitHub only). More details here: /docs/appveyor-yml
