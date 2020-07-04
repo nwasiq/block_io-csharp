@@ -27,12 +27,28 @@ branches:
 # Maximum number of concurrent jobs for the project
 max_jobs: 1
 
+environment:
+  matrix:
+    - architecture: "x86"
+    - architecture: "x64"
+
+install:
+  # Download .NET Core 3.0 Preview 2 SDK and add to PATH
+  - ps: $urlCurrent = "https://download.microsoft.com/download/F/A/A/FAAE9280-F410-458E-8819-279C5A68EDCF/dotnet-sdk-3.0.0-preview2-006497-win-%architecture%.zip"
+  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
+  - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
+  - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
+  - ps: (New-Object System.Net.WebClient).DownloadFile($urlCurrent, $tempFileCurrent)
+  - ps: Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory($tempFileCurrent, $env:DOTNET_INSTALL_DIR)
+  - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"  
+
+  
 #---------------------------------#
 #    environment configuration    #
 #---------------------------------#
 
 # Build worker image (VM template)
-image: Visual Studio 2019
+# image: Visual Studio 2019
 
 # scripts that are called at very beginning, before repo cloning
 init:
@@ -79,9 +95,7 @@ dotnet_csproj:
 #---------------------------------#
 
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
-platform:
-  - x86
-  - x64
+platform: Any CPU
 
 # to add several platforms to build matrix:
 #platform:
@@ -89,11 +103,7 @@ platform:
 #  - Any CPU
 
 # build Configuration, i.e. Debug, Release, etc.
-
-
-configuration:
-  - Debug
-  - Release
+configuration: Release
 
 # to add several configurations to build matrix:
 #configuration:
