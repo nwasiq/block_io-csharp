@@ -1,11 +1,8 @@
 language: csharp
 solution: BlockIoLib.sln
-# script:
-#   - xbuild /p:Configuration=Debug BlockIoLib.sln
-before_install:
-  - sudo apt-get install nunit-console
-before_script:
+install:
   - nuget restore BlockIoLib.sln
-after_script:
-  # - nunit-console BlockIoLib.UnitTests/bin/Debug/netcoreapp3.0/BlockIoLib.UnitTests.dll
-  - nunit-console BlockIoLib.UnitTests/bin/Release/netcoreapp3.0/BlockIoLib.UnitTests.dll 
+  - nuget install NUnit.Console -Version 3.9.0 -OutputDirectory testrunner
+script:
+  - msbuild /p:Configuration=Release BlockIoLib.sln
+  - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./BlockIoLib.UnitTests/bin/Release/netcoreapp3.0/BlockIoLib.UnitTests.dll
