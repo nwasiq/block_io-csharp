@@ -38,8 +38,7 @@ install:
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
-  - ps: $tempFileDirCurrent = "$pwd\$tempFileCurrent"
-  - ps: (New-Object System.Net.WebClient).DownloadFile($urlCurrent, $tempFileDirCurrent)
+  - ps: (New-Object System.Net.WebClient).DownloadFile($urlCurrent, $$env:DOTNET_INSTALL_DIR)
   - ps: Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory($tempFileCurrent, $env:DOTNET_INSTALL_DIR)
   - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"  
 
