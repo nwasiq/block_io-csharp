@@ -52,6 +52,7 @@ before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: dotnet restore ./BlockIoLib/BlockIoLib.csproj --verbosity m
+  - cmd: nuget restore BlockIoLib.sln
 
 test_script:
   # restore packages for our unit tests
