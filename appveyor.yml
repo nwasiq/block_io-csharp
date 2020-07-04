@@ -55,6 +55,13 @@ cache:
   - '%LocalAppData%\NuGet\v3-cache' # NuGet v3
 
 
+before_test:
+  - dotnet restore
+
+# to run your custom scripts instead of automatic tests
+test_script:
+  - dotnet test
+
 
 # .NET Core `*.*proj` files patching:
 dotnet_csproj:
