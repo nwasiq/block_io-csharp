@@ -19,7 +19,7 @@ namespace block_io_lib
             string api_key = "27d6-fc3a-1606-e6d4";
             string pin = "Was1qWas1q";
             Key testKey;
-
+            Console.WriteLine(Helper.PinToAesKey("123456"));
             // Key tests
 
             Program.RunKeyTests(WifTestStr, PassphraseStr, DataToSignStr);

@@ -70,7 +70,7 @@ namespace block_io_lib
             }
         }
 
-        private static string ByteArrayToHexString(byte[] ba)
+        public static string ByteArrayToHexString(byte[] ba)
         {
             return BitConverter.ToString(ba).Replace("-", "").ToLower();
         }
