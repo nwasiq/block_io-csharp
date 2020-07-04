@@ -1,5 +1,6 @@
 language: csharp
-solution: BlockIoLib.sln
+script:
+  - xbuild /p:Configuration=Debug BlockIoLib.sln
 before_install:
   - sudo apt-get install nunit-console
 before_script:
