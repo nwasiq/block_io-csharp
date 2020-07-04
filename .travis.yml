@@ -1,5 +1,5 @@
 language: csharp
-solution: BlockIoLib.sln.sln //for release
+solution: BlockIoLib.sln.sln
 # script:
 #   - xbuild /p:Configuration=Debug BlockIoLib.sln
 before_install:
