@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace block_io_lib
+namespace BlockIoLib
 {
     public partial class BlockIo
     {

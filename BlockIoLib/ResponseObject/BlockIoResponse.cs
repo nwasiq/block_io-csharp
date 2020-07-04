@@ -1,5 +1,5 @@
 ﻿
-namespace block_io_lib
+namespace BlockIoLib
 {
     public class BlockIoResponse <T>
     {

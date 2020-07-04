@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace block_io_lib
+namespace BlockIoLib
 {
     class Program
     {

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "block_io_lib", "block_io_lib\block_io_lib.csproj", "{592CB20C-7AED-48E2-A007-81C931EC74BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockIoLib", "BlockIoLib\BlockIoLib.csproj", "{592CB20C-7AED-48E2-A007-81C931EC74BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "block_io_lib.UnitTests", "block_io_lib.UnitTests\block_io_lib.UnitTests.csproj", "{CF661357-E292-4651-89E5-29E395CB722E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockIoLib.UnitTests", "BlockIoLib.UnitTests\BlockIoLib.UnitTests.csproj", "{CF661357-E292-4651-89E5-29E395CB722E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

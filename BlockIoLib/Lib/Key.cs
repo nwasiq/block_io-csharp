@@ -2,7 +2,7 @@
 using Base58Check;
 using System.Linq;
 
-namespace block_io_lib
+namespace BlockIoLib
 {
     public class Key: NBitcoin.Key
     {

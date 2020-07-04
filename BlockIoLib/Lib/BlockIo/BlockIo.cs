@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace block_io_lib
+namespace BlockIoLib
 {
     /**
      * A note on args

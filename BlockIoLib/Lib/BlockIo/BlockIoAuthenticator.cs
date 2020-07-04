@@ -1,7 +1,7 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
 
-namespace block_io_lib
+namespace BlockIoLib
 {
     class BlockIoAuthenticator : IAuthenticator
     {
