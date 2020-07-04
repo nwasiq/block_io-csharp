@@ -1,0 +1,8 @@
+language: csharp
+solution: block_io_lib.sln
+before_install:
+  - sudo apt-get install nunit-console
+before_script:
+  - nuget restore block_io_lib.sln
+after_script:
+  - nunit-console block_io_lib.UnitTests/bin/Debug/netcoreapp3.1/block_io_lib.UnitTests.dll
