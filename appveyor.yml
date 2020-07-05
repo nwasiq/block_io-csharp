@@ -31,7 +31,7 @@ matrix:
   environment:
     - architecture: "https://download.visualstudio.microsoft.com/download/pr/b9728e15-2acb-4a02-ba8e-d122bd2c497c/ad2258b4463a4180187b1fed0f340971/dotnet-sdk-3.0.103-win-x86.zip"
     - architecture: "https://download.visualstudio.microsoft.com/download/pr/874a85a8-de9b-405d-b75e-9c3e9b3ddd0d/eb5f33724a7ba55d47fd12b2f1f8f764/dotnet-sdk-3.0.103-win-x64.zip"
-    
+    - fast_finish: true 
     
 
 install:
@@ -59,10 +59,6 @@ init:
 # clone directory
 clone_folder: C:\Users\nwasi\Desktop\Workspace\BlockIoLibs\c-sharp
 
-# setting up etc\hosts file
-# this is how to allow failing jobs in the matrix
-matrix:
-  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
 
 
 before_build:
