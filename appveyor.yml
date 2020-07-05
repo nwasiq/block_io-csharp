@@ -35,16 +35,14 @@ environment:
 matrix:
   fast_finish: true
   for:
-  -
-    matrix:
+  - matrix:
       only:
         - job_name: x64 Build
 
     build_script:
     - cmd: $urlcurrent="https://download.visualstudio.microsoft.com/download/pr/874a85a8-de9b-405d-b75e-9c3e9b3ddd0d/eb5f33724a7ba55d47fd12b2f1f8f764/dotnet-sdk-3.0.103-win-x64.zip"
 
-  -
-    matrix:
+  - matrix:
       only:
         - job_name: x86 Build
 
