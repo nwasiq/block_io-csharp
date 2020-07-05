@@ -22,7 +22,7 @@ install:
   # Download .NET Core 2.0 Preview 2 SDK and add to PATH
   - ps: set directory "https://download.visualstudio.microsoft.com/download/pr/$env:hashOne/$env:hashTwo/dotnet-sdk-3.0.103-win-$env:architecture.zip"
   - ps: $urlCurrent = Get-Variable -Name directory -ValueOnly
-  - ps: echo Downloading dotnet from $urlCurrent
+  - ps: echo "Downloading dotnet from $urlCurrent"
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
