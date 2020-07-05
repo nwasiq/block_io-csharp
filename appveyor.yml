@@ -11,11 +11,11 @@ branches:
 environment:
   matrix:
     - architecture: "x86"
-      hash-one: "b9728e15-2acb-4a02-ba8e-d122bd2c497c"
-      hash-two: "ad2258b4463a4180187b1fed0f340971"
+      hashOne: "b9728e15-2acb-4a02-ba8e-d122bd2c497c"
+      hashTwo: "ad2258b4463a4180187b1fed0f340971"
     - architecture: "x64"
-      hash-one: "874a85a8-de9b-405d-b75e-9c3e9b3ddd0d"
-      hash-two: "eb5f33724a7ba55d47fd12b2f1f8f764"
+      hashOne: "874a85a8-de9b-405d-b75e-9c3e9b3ddd0d"
+      hashTwo: "eb5f33724a7ba55d47fd12b2f1f8f764"
     
 
 install:
