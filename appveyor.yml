@@ -95,7 +95,7 @@ dotnet_csproj:
 #---------------------------------#
 
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
-platform: Any CPU
+platform: x64
 
 # to add several platforms to build matrix:
 #platform:
