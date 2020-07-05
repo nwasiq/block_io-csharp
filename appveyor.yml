@@ -34,9 +34,9 @@ environment:
 
 install:
   # Download .NET Core 3.0 Preview 2 SDK and add to PATH
-  - ps: Invoke-WebRequest "https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.0.103-windows-%architecture%-binaries"
-  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk\%architecture%"
-  - ps: $fileName = [System.IO.Path]::GetFileName((Get-RedirectedUrl "https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.0.103-windows-%architecture%-binaries"))
+  - ps: Invoke-WebRequest "https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.0.103-windows-x64-binaries"
+  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk\x64"
+  - ps: $fileName = [System.IO.Path]::GetFileName((Get-RedirectedUrl "https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.0.103-windows-x64-binaries"))
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory($fileName, $env:DOTNET_INSTALL_DIR)
   - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"  
