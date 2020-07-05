@@ -29,12 +29,12 @@ max_jobs: 1
 
 environment:
   matrix:
-    - architecture: "x86"
-    - architecture: "x64"
+    - architecture: "https://download.visualstudio.microsoft.com/download/pr/b9728e15-2acb-4a02-ba8e-d122bd2c497c/ad2258b4463a4180187b1fed0f340971/dotnet-sdk-3.0.103-win-x86.zip"
+    - architecture: "https://download.visualstudio.microsoft.com/download/pr/874a85a8-de9b-405d-b75e-9c3e9b3ddd0d/eb5f33724a7ba55d47fd12b2f1f8f764/dotnet-sdk-3.0.103-win-x64.zip"
 
 install:
   # Download .NET Core 2.0 Preview 2 SDK and add to PATH
-  - ps: $urlCurrent = "https://download.visualstudio.microsoft.com/download/pr/874a85a8-de9b-405d-b75e-9c3e9b3ddd0d/eb5f33724a7ba55d47fd12b2f1f8f764/dotnet-sdk-3.0.103-win-x64.zip"
+  - ps: $urlCurrent = architecture
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
@@ -95,7 +95,7 @@ dotnet_csproj:
 #---------------------------------#
 
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
-platform: x64
+platform: Any CPU
 
 # to add several platforms to build matrix:
 #platform:
