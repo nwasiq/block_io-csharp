@@ -34,7 +34,7 @@ environment:
 
 install:
   # Download .NET Core 2.0 Preview 2 SDK and add to PATH
-  - ps: $urlCurrent = architecture
+  - ps: $urlCurrent = $architecture
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
