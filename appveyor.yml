@@ -25,33 +25,18 @@ branches:
 #    - Project-B/
 
 # Maximum number of concurrent jobs for the project
-max_jobs: 2
-
-environment:
-  matrix:
-  - job_name: X64 Build
-  - job_name: x86 Build
+max_jobs: 1
 
 matrix:
-  fast_finish: true
-  for:
-  - matrix:
-      only:
-        - job_name: x64 Build
-
-    build_script:
-    - cmd: $urlcurrent="https://download.visualstudio.microsoft.com/download/pr/874a85a8-de9b-405d-b75e-9c3e9b3ddd0d/eb5f33724a7ba55d47fd12b2f1f8f764/dotnet-sdk-3.0.103-win-x64.zip"
-
-  - matrix:
-      only:
-        - job_name: x86 Build
-
-    build_script:
-    - cmd: $urlcurrent="https://download.visualstudio.microsoft.com/download/pr/b9728e15-2acb-4a02-ba8e-d122bd2c497c/ad2258b4463a4180187b1fed0f340971/dotnet-sdk-3.0.103-win-x86.zip"
+  environment:
+    - architecture: "https://download.visualstudio.microsoft.com/download/pr/b9728e15-2acb-4a02-ba8e-d122bd2c497c/ad2258b4463a4180187b1fed0f340971/dotnet-sdk-3.0.103-win-x86.zip"
+    - architecture: "https://download.visualstudio.microsoft.com/download/pr/874a85a8-de9b-405d-b75e-9c3e9b3ddd0d/eb5f33724a7ba55d47fd12b2f1f8f764/dotnet-sdk-3.0.103-win-x64.zip"
+    
     
 
 install:
   # Download .NET Core 2.0 Preview 2 SDK and add to PATH
+  - ps: $urlCurrent = $env:architecture
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
