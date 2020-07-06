@@ -10,10 +10,10 @@ namespace BlockIoLib.Examples
         private string apiKey;
         private string pin;
 
-        public Basic()
+        public Basic(string k, string p)
         {
-            apiKey = "27d6-fc3a-1606-e6d4";
-            pin = "Was1qWas1q";
+            apiKey = k;
+            pin = p;
             blockIo = new BlockIo(apiKey, pin);
         }
 

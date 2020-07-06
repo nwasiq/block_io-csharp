@@ -14,11 +14,19 @@ namespace BlockIoLib
              * TESTS
              */
 
-            string api_key = "";
+            string api_key = "6094-2139-1c8c-21b1";
             string pin = "";
 
-            Basic example = new Basic(api_key, pin);
-            example.RunBasicExample();
+            string host = "";
+            string user = "";
+            string pass = "";
+            string port = "";
+
+            Basic basicExample = new Basic(api_key, pin);
+            //basicExample.RunBasicExample();
+
+            Proxy proxyExample = new Proxy(api_key, pin, host, user, pass, port);
+            proxyExample.RunProxyExample();
             // Withdraw
 
             //BlockIo test = new BlockIo(api_key, pin);
