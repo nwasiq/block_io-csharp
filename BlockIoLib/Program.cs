@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using BlockIoLib.Examples;
+using NBitcoin;
 using System;
 using System.Runtime.InteropServices.ComTypes;
 
@@ -13,9 +14,11 @@ namespace BlockIoLib
              * TESTS
              */
 
-            string api_key = "27d6-fc3a-1606-e6d4";
+            string api_key = "";
             string pin = "";
 
+            Basic example = new Basic(api_key, pin);
+            example.RunBasicExample();
             // Withdraw
 
             //BlockIo test = new BlockIo(api_key, pin);
