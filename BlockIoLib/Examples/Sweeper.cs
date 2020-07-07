@@ -28,9 +28,11 @@ namespace BlockIoLib.Examples
                                   "  to_address: '" + envReader.GetStringValue("TO_ADDRESS") +
                                   "', private_key: '" + envReader.GetStringValue("PRIVATE_KEY_FROM_ADDRESS") +
                                   "', from_addresss: '" + envReader.GetStringValue("FROM_ADDRESS") +
-                                  "'}").Data;
+                                  "'}");
 
-            Console.WriteLine("Sweep Res: " + res);
+            if (res.Status == "success") {
+                Console.WriteLine("Sweep Res: " + res.Data);
+            }
         }
     }
 }
