@@ -19,8 +19,11 @@ namespace BlockIoLib
             //Proxy proxyExample = new Proxy();
             //proxyExample.RunProxyExample();
 
-            Sweeper sweeperExample = new Sweeper();
-            sweeperExample.RunSweeperExample();
+            //Sweeper sweeperExample = new Sweeper();
+            //sweeperExample.RunSweeperExample();
+
+            MaxWithdrawal maxWithdrawal = new MaxWithdrawal();
+            maxWithdrawal.RunMaxWithdrawalExample();
 
             /**
              * TESTS

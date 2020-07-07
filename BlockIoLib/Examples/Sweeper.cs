@@ -32,7 +32,10 @@ namespace BlockIoLib.Examples
 
             if (res.Status == "success") {
                 Console.WriteLine("Sweep Res: " + res.Data);
+                return;
             }
+
+            Console.WriteLine("Error occurred: " + res.Data);
         }
     }
 }

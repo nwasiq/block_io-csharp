@@ -250,15 +250,8 @@ namespace BlockIoLib
                 });
             }
             var response = !Path.Contains("sign_and_finalize") ? await RestClient.ExecuteGetAsync(request) : await RestClient.ExecutePostAsync(request);
-            CheckBadRequest(response);
+
             return GetData<BlockIoResponse<dynamic>>(response);
-        }
-        private void CheckBadRequest(IRestResponse response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception(response.Content);
-            }
         }
         private T GetData<T>(IRestResponse response)
         {
