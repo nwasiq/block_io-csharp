@@ -1,5 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using dotenv.net;
+using dotenv.net.Utilities;
+using System;
+using System.IO;
 using System.Text;
 
 namespace BlockIoLib.Examples
@@ -7,14 +9,16 @@ namespace BlockIoLib.Examples
     class Basic
     {
         private BlockIo blockIo;
-        private string apiKey;
-        private string pin;
 
-        public Basic(string k, string p)
+        public Basic()
         {
-            apiKey = k;
-            pin = p;
-            blockIo = new BlockIo(apiKey, pin);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..");
+            path = Path.GetFullPath(path) + "\\.env";
+            DotEnv.Config(true, path);
+            DotEnv.Config(true, path, Encoding.Unicode, false);
+            var envReader = new EnvReader();
+
+            blockIo = new BlockIo(envReader.GetStringValue("API_KEY"), envReader.GetStringValue("PIN"));
         }
 
         public void RunBasicExample()

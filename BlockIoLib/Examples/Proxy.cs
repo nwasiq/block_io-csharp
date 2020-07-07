@@ -1,5 +1,8 @@
-﻿using System;
+﻿using dotenv.net;
+using dotenv.net.Utilities;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace BlockIoLib.Examples
@@ -7,21 +10,21 @@ namespace BlockIoLib.Examples
     class Proxy
     {
         private BlockIo blockIo;
-        private string apiKey;
-        private string pin;
-        private string proxyHost;
-        private string proxyUser;
-        private string proxyPass;
-        private string proxyPort;
-        public Proxy(string k, string p, string host, string user, string pass, string port)
+        public Proxy()
         {
-            apiKey = k;
-            pin = p;
-            proxyHost = host;
-            proxyPass = pass;
-            proxyPort = port;
-            proxyUser = user;
-            blockIo = new BlockIo(apiKey, pin, 2, "{proxy: {hostname: " + proxyHost + ", port: " + proxyPort + ", username: " + proxyUser + ", password: " + proxyPass + "}");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..");
+            path = Path.GetFullPath(path) + "\\.env";
+            DotEnv.Config(true, path);
+            DotEnv.Config(true, path, Encoding.Unicode, false);
+            var envReader = new EnvReader();
+
+            blockIo = new BlockIo(envReader.GetStringValue("API_KEY"), envReader.GetStringValue("PIN"), 2,
+                                  "{proxy: {" +
+                                  "  hostname: '" + envReader.GetStringValue("PROXY_HOST") + 
+                                  "', port: '" + envReader.GetStringValue("PROXY_PORT") + 
+                                  "', username: '" + envReader.GetStringValue("PROXY_USER") + 
+                                  "', password: '" + envReader.GetStringValue("PROXY_PASSWORD") + 
+                                  "'}}");
         }
 
         public void RunProxyExample()
